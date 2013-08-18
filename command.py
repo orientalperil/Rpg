@@ -119,7 +119,7 @@ class completer:
 		"""
 		Construct. Set the available commands in an options var
 		"""
-		self.options = sorted(command.mapping.keys())
+		self.commands = sorted(command.mapping.keys())
 
 	def complete(self, text, state):
 		"""
@@ -129,14 +129,20 @@ class completer:
 		# on first trigger, build possible matches
 		if state == 0:
 			# cache matches (entries that start with entered text)
-			if len(text.split(' ')) > 1:
-				return text
+			current = text.split(' ')
+			currentInd = len(current) - 1
+			if currentInd == 0:
+				options = self.commands
+			else:
+				if current[0] == 'move':
+					# Get next autocomplete values from typed command
+					options = [current[0] + ' ' + s for s in ['west', 'south', 'north', 'east']]
 
-			if text:
-				self.matches = [s for s in self.options if s and s.startswith(text)]
+			if current:
+				self.matches = [s for s in options if s and s.startswith(text)]
 			# no text entered, all matches possible
 			else:
-				self.matches = self.options[:]
+				self.matches = options[:]
 
 		# return match indexed by state
 		try:
